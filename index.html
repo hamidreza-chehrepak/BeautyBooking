@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeautyBooking - Online Appointments</title>
+    <meta name="description" content="Book beauty salon, massage, and skincare appointments online.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <a class="logo" href="#">BeautyBooking</a>
+        <nav>
+            <a href="#services">Services</a>
+            <a href="#booking">Book Now</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <p class="tagline">YOUR BEAUTY, YOUR MOMENT</p>
+            <h1>Relax. Refresh. Feel Beautiful.</h1>
+            <p>Discover beauty, massage, and wellness services in one place.</p>
+            <a class="button" href="#booking">Book an Appointment</a>
+        </section>
+
+        <section id="services" class="section">
+            <h2>Our Services</h2>
+            <p class="section-description">Choose the service you need.</p>
+
+            <div class="service-grid">
+                <article class="service-card">
+                    <div class="service-icon">💇‍♀️</div>
+                    <h3>Beauty Salon</h3>
+                    <p>Hair styling, makeup, and beauty treatments.</p>
+                    <button class="choose-service" data-service="Beauty Salon">
+                        Choose Service
+                    </button>
+                </article>
+
+                <article class="service-card">
+                    <div class="service-icon">💆</div>
+                    <h3>Massage Therapy</h3>
+                    <p>Relaxation and wellness massage sessions.</p>
+                    <button class="choose-service" data-service="Massage Therapy">
+                        Choose Service
+                    </button>
+                </article>
+
+                <article class="service-card">
+                    <div class="service-icon">✨</div>
+                    <h3>Skincare</h3>
+                    <p>Facial care and skin beauty treatments.</p>
+                    <button class="choose-service" data-service="Skincare">
+                        Choose Service
+                    </button>
+                </article>
+            </div>
+        </section>
+
+        <section id="booking" class="section booking-section">
+            <h2>Book Your Appointment</h2>
+            <p class="section-description">
+                Choose a service, date, and available time.
+            </p>
+
+            <form id="booking-form">
+                <label for="customer-name">Your Name</label>
+                <input
+                    id="customer-name"
+                    name="name"
+                    type="text"
+                    placeholder="Enter your name"
+                    autocomplete="name"
+                    required
+                >
+
+                <label for="customer-phone">Phone Number</label>
+                <input
+                    id="customer-phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    inputmode="tel"
+                    autocomplete="tel"
+                    required
+                >
+
+                <label for="service">Select Service</label>
+                <select id="service" name="service" required>
+                    <option value="">Choose a service</option>
+                    <option value="Beauty Salon">Beauty Salon</option>
+                    <option value="Massage Therapy">Massage Therapy</option>
+                    <option value="Skincare">Skincare</option>
+                </select>
+
+                <label for="booking-date">Appointment Date</label>
+                <input
+                    id="booking-date"
+                    name="date"
+                    type="date"
+                    required
+                >
+
+                <label for="booking-time">Appointment Time</label>
+                <select id="booking-time" name="time" required>
+                    <option value="">Choose a time</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="14:00">2:00 PM</option>
+                    <option value="16:00">4:00 PM</option>
+                    <option value="18:00">6:00 PM</option>
+                    <option value="20:00">8:00 PM</option>
+                </select>
+
+                <button class="button submit-button" type="submit">
+                    Confirm Appointment
+                </button>
+
+                <p id="booking-message" role="status"></p>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 BeautyBooking. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
