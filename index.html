@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BeautyBooking - Online Appointments</title>
     <meta name="description" content="Book beauty salon, massage, and skincare appointments online.">
+
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
 </head>
 <body>
 
@@ -35,58 +37,35 @@
                     <div class="service-icon">💇‍♀️</div>
                     <h3>Beauty Salon</h3>
                     <p>Hair styling, makeup, and beauty treatments.</p>
-                    <button class="choose-service" data-service="Beauty Salon">
-                        Choose Service
-                    </button>
+                    <button class="choose-service" data-service="Beauty Salon" type="button">Choose Service</button>
                 </article>
 
                 <article class="service-card">
                     <div class="service-icon">💆</div>
                     <h3>Massage Therapy</h3>
                     <p>Relaxation and wellness massage sessions.</p>
-                    <button class="choose-service" data-service="Massage Therapy">
-                        Choose Service
-                    </button>
+                    <button class="choose-service" data-service="Massage Therapy" type="button">Choose Service</button>
                 </article>
 
                 <article class="service-card">
                     <div class="service-icon">✨</div>
                     <h3>Skincare</h3>
                     <p>Facial care and skin beauty treatments.</p>
-                    <button class="choose-service" data-service="Skincare">
-                        Choose Service
-                    </button>
+                    <button class="choose-service" data-service="Skincare" type="button">Choose Service</button>
                 </article>
             </div>
         </section>
 
         <section id="booking" class="section booking-section">
             <h2>Book Your Appointment</h2>
-            <p class="section-description">
-                Choose a service, date, and available time.
-            </p>
+            <p class="section-description">Choose a service, date, and available time.</p>
 
             <form id="booking-form">
                 <label for="customer-name">Your Name</label>
-                <input
-                    id="customer-name"
-                    name="name"
-                    type="text"
-                    placeholder="Enter your name"
-                    autocomplete="name"
-                    required
-                >
+                <input id="customer-name" name="name" type="text" placeholder="Enter your name" autocomplete="name" required>
 
                 <label for="customer-phone">Phone Number</label>
-                <input
-                    id="customer-phone"
-                    name="phone"
-                    type="tel"
-                    placeholder="Enter your phone number"
-                    inputmode="tel"
-                    autocomplete="tel"
-                    required
-                >
+                <input id="customer-phone" name="phone" type="tel" placeholder="Enter your phone number" inputmode="tel" autocomplete="tel" required>
 
                 <label for="service">Select Service</label>
                 <select id="service" name="service" required>
@@ -96,13 +75,17 @@
                     <option value="Skincare">Skincare</option>
                 </select>
 
-                <label for="booking-date">Appointment Date</label>
+                <label for="booking-date-display">Appointment Date (Persian Calendar)</label>
                 <input
-                    id="booking-date"
-                    name="date"
-                    type="date"
+                    id="booking-date-display"
+                    type="text"
+                    placeholder="Select a Persian date"
+                    autocomplete="off"
                     required
+                    readonly
                 >
+
+                <input id="booking-date" name="date" type="hidden">
 
                 <label for="booking-time">Appointment Time</label>
                 <select id="booking-time" name="time" required>
@@ -113,13 +96,11 @@
                     <option value="16:00">4:00 PM</option>
                     <option value="18:00">6:00 PM</option>
                     <option value="20:00">8:00 PM</option>
+                    <option value="22:00">10:00 PM</option>
                 </select>
 
-                <button class="button submit-button" type="submit">
-                    Confirm Appointment
-                </button>
-
-                <p id="booking-message" role="status"></p>
+                <button class="button submit-button" type="submit">Confirm Appointment</button>
+                <p id="booking-message" role="status" aria-live="polite"></p>
             </form>
         </section>
     </main>
@@ -128,6 +109,10 @@
         <p>&copy; 2026 BeautyBooking. All rights reserved.</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
