@@ -17,6 +17,7 @@
         <nav>
             <a href="#services">Services</a>
             <a href="#booking">Book Now</a>
+            <a href="#appointments">Daily Appointments</a>
         </nav>
     </header>
 
@@ -62,10 +63,13 @@
 
             <form id="booking-form">
                 <label for="customer-name">Your Name</label>
-                <input id="customer-name" name="name" type="text" placeholder="Enter your name" autocomplete="name" required>
+                <input id="customer-name" name="name" type="text"
+                       placeholder="Enter your name" autocomplete="name" required>
 
                 <label for="customer-phone">Phone Number</label>
-                <input id="customer-phone" name="phone" type="tel" placeholder="Enter your phone number" inputmode="tel" autocomplete="tel" required>
+                <input id="customer-phone" name="phone" type="tel"
+                       placeholder="Enter your phone number"
+                       inputmode="tel" autocomplete="tel" required>
 
                 <label for="service">Select Service</label>
                 <select id="service" name="service" required>
@@ -76,14 +80,9 @@
                 </select>
 
                 <label for="booking-date-display">Appointment Date (Persian Calendar)</label>
-                <input
-                    id="booking-date-display"
-                    type="text"
-                    placeholder="Select a Persian date"
-                    autocomplete="off"
-                    required
-                    readonly
-                >
+                <input id="booking-date-display" type="text"
+                       placeholder="Select a Persian date"
+                       autocomplete="off" required readonly>
 
                 <input id="booking-date" name="date" type="hidden">
 
@@ -99,9 +98,64 @@
                     <option value="22:00">10:00 PM</option>
                 </select>
 
-                <button class="button submit-button" type="submit">Confirm Appointment</button>
+                <button class="button submit-button" type="submit">
+                    Confirm Appointment
+                </button>
+
                 <p id="booking-message" role="status" aria-live="polite"></p>
             </form>
+        </section>
+
+        <!-- Daily appointment management -->
+        <section id="appointments" class="section">
+            <h2>Daily Appointment Schedule</h2>
+            <p class="section-description">
+                View appointments saved in this browser for the selected date.
+            </p>
+
+            <div class="appointment-controls">
+                <label for="schedule-date">Select Appointment Date</label>
+                <input id="schedule-date" type="date">
+                <button id="show-all-appointments" class="button" type="button">
+                    Show All Saved Appointments
+                </button>
+            </div>
+
+            <div class="appointment-summary">
+                <div class="summary-card">
+                    <span>Total Appointments</span>
+                    <strong id="appointment-count">0</strong>
+                </div>
+                <div class="summary-card">
+                    <span>Booked Time Slots</span>
+                    <strong id="booked-slots-count">0</strong>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="appointments-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Customer Name</th>
+                            <th>Phone</th>
+                            <th>Service</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointments-table-body">
+                        <tr>
+                            <td colspan="5">No appointments to display.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p id="schedule-message" role="status" aria-live="polite"></p>
+            <p class="section-description">
+                Note: This schedule is a local browser view, not a shared
+                multi-customer booking database.
+            </p>
         </section>
     </main>
 
