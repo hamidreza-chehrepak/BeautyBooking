@@ -1,133 +1,246 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeautyBooking - Online Appointments</title>
-    <meta name="description" content="Book beauty salon, massage, and skincare appointments online.">
-
+    <title>BeautyBooking | رزرو آنلاین سالن زیبایی</title>
+    <meta name="description" content="رزرو آنلاین خدمات ناخن، ماساژ، مو، پوست و میکاپ.">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
 </head>
 <body>
-
     <header>
         <a class="logo" href="#">BeautyBooking</a>
         <nav>
-            <a href="#services">Services</a>
-            <a href="#booking">Book Now</a>
-            <a href="#appointments">Daily Appointments</a>
+            <a href="#lines">لاین‌های خدمات</a>
+            <a href="#booking">رزرو نوبت</a>
+            <a href="#appointments">مدیریت نوبت‌ها</a>
         </nav>
     </header>
 
     <main>
         <section class="hero">
-            <p class="tagline">YOUR BEAUTY, YOUR MOMENT</p>
-            <h1>Relax. Refresh. Feel Beautiful.</h1>
-            <p>Discover beauty, massage, and wellness services in one place.</p>
-            <a class="button" href="#booking">Book an Appointment</a>
+            <p class="tagline">زیبایی، آرامش، حال خوب</p>
+            <h1>نوبت زیبایی خود را آنلاین رزرو کنید</h1>
+            <p>لاین موردنظرتان را انتخاب کنید، ساعت‌های آزاد را ببینید و نوبت بگیرید.</p>
+            <a class="button" href="#lines">مشاهده جدول‌های هفتگی</a>
         </section>
 
-        <section id="services" class="section">
-            <h2>Our Services</h2>
-            <p class="section-description">Choose the service you need.</p>
+        <section id="lines" class="section">
+            <h2>جدول نوبت هفتگی هر لاین</h2>
+            <p class="section-description">
+                روز و ساعت دلخواهتان را انتخاب کنید. وضعیت ساعت‌ها در این صفحه فعلاً بر اساس اطلاعات ذخیره‌شده در همین مرورگر است.
+            </p>
 
-            <div class="service-grid">
-                <article class="service-card">
-                    <div class="service-icon">💇‍♀️</div>
-                    <h3>Beauty Salon</h3>
-                    <p>Hair styling, makeup, and beauty treatments.</p>
-                    <button class="choose-service" data-service="Beauty Salon" type="button">Choose Service</button>
+            <div id="weekly-schedules" class="weekly-schedules">
+                <article class="weekly-line" data-line="nail">
+                    <h3>💅 لاین ناخن</h3>
+                    <p>مانیکور، پدیکور، کاشت و ترمیم ناخن</p>
+                    <div class="weekly-table-wrap">
+                        <table class="weekly-table">
+                            <thead>
+                                <tr>
+                                    <th>ساعت</th>
+                                    <th>شنبه</th>
+                                    <th>یکشنبه</th>
+                                    <th>دوشنبه</th>
+                                    <th>سه‌شنبه</th>
+                                    <th>چهارشنبه</th>
+                                    <th>پنجشنبه</th>
+                                    <th>جمعه</th>
+                                </tr>
+                            </thead>
+                            <tbody class="weekly-table-body"></tbody>
+                        </table>
+                    </div>
                 </article>
 
-                <article class="service-card">
-                    <div class="service-icon">💆</div>
-                    <h3>Massage Therapy</h3>
-                    <p>Relaxation and wellness massage sessions.</p>
-                    <button class="choose-service" data-service="Massage Therapy" type="button">Choose Service</button>
+                <article class="weekly-line" data-line="massage">
+                    <h3>💆 لاین ماساژ</h3>
+                    <p>ماساژ آرامش‌بخش و خدمات ریلکسیشن</p>
+                    <div class="weekly-table-wrap">
+                        <table class="weekly-table">
+                            <thead>
+                                <tr>
+                                    <th>ساعت</th>
+                                    <th>شنبه</th>
+                                    <th>یکشنبه</th>
+                                    <th>دوشنبه</th>
+                                    <th>سه‌شنبه</th>
+                                    <th>چهارشنبه</th>
+                                    <th>پنجشنبه</th>
+                                    <th>جمعه</th>
+                                </tr>
+                            </thead>
+                            <tbody class="weekly-table-body"></tbody>
+                        </table>
+                    </div>
                 </article>
 
-                <article class="service-card">
-                    <div class="service-icon">✨</div>
-                    <h3>Skincare</h3>
-                    <p>Facial care and skin beauty treatments.</p>
-                    <button class="choose-service" data-service="Skincare" type="button">Choose Service</button>
+                <article class="weekly-line" data-line="hair">
+                    <h3>💇 لاین مو</h3>
+                    <p>رنگ، کوتاهی، دکلره و کراتین</p>
+                    <div class="weekly-table-wrap">
+                        <table class="weekly-table">
+                            <thead>
+                                <tr>
+                                    <th>ساعت</th>
+                                    <th>شنبه</th>
+                                    <th>یکشنبه</th>
+                                    <th>دوشنبه</th>
+                                    <th>سه‌شنبه</th>
+                                    <th>چهارشنبه</th>
+                                    <th>پنجشنبه</th>
+                                    <th>جمعه</th>
+                                </tr>
+                            </thead>
+                            <tbody class="weekly-table-body"></tbody>
+                        </table>
+                    </div>
                 </article>
+
+                <article class="weekly-line" data-line="skin">
+                    <h3>✨ لاین پوست</h3>
+                    <p>پاک‌سازی، فیشیال و مراقبت پوست</p>
+                    <div class="weekly-table-wrap">
+                        <table class="weekly-table">
+                            <thead>
+                                <tr>
+                                    <th>ساعت</th>
+                                    <th>شنبه</th>
+                                    <th>یکشنبه</th>
+                                    <th>دوشنبه</th>
+                                    <th>سه‌شنبه</th>
+                                    <th>چهارشنبه</th>
+                                    <th>پنجشنبه</th>
+                                    <th>جمعه</th>
+                                </tr>
+                            </thead>
+                            <tbody class="weekly-table-body"></tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <article class="weekly-line" data-line="makeup">
+                    <h3>💄 لاین میکاپ</h3>
+                    <p>آرایش و میکاپ مناسبتی</p>
+                    <div class="weekly-table-wrap">
+                        <table class="weekly-table">
+                            <thead>
+                                <tr>
+                                    <th>ساعت</th>
+                                    <th>شنبه</th>
+                                    <th>یکشنبه</th>
+                                    <th>دوشنبه</th>
+                                    <th>سه‌شنبه</th>
+                                    <th>چهارشنبه</th>
+                                    <th>پنجشنبه</th>
+                                    <th>جمعه</th>
+                                </tr>
+                            </thead>
+                            <tbody class="weekly-table-body"></tbody>
+                        </table>
+                    </div>
+                </article>
+            </div>
+
+            <div class="availability-legend">
+                <span><i class="legend-dot available-dot"></i> آزاد</span>
+                <span><i class="legend-dot booked-dot"></i> رزروشده</span>
+                <span><i class="legend-dot selected-dot"></i> انتخاب شما</span>
             </div>
         </section>
 
         <section id="booking" class="section booking-section">
-            <h2>Book Your Appointment</h2>
-            <p class="section-description">Choose a service, date, and available time.</p>
+            <h2>رزرو نوبت</h2>
+            <p class="section-description">
+                ابتدا یک خانه آزاد از جدول هفتگی انتخاب کنید؛ سپس مشخصاتتان را وارد کنید.
+            </p>
 
             <form id="booking-form">
-                <label for="customer-name">Your Name</label>
+                <label for="customer-name">نام و نام خانوادگی</label>
                 <input id="customer-name" name="name" type="text"
-                       placeholder="Enter your name" autocomplete="name" required>
+                       placeholder="نام شما" autocomplete="name" required>
 
-                <label for="customer-phone">Phone Number</label>
+                <label for="customer-phone">شماره تماس</label>
                 <input id="customer-phone" name="phone" type="tel"
-                       placeholder="Enter your phone number"
-                       inputmode="tel" autocomplete="tel" required>
+                       placeholder="شماره تماس شما" inputmode="tel"
+                       autocomplete="tel" required>
 
-                <label for="service">Select Service</label>
+                <label for="service">لاین و نوع خدمات</label>
                 <select id="service" name="service" required>
-                    <option value="">Choose a service</option>
-                    <option value="Beauty Salon">Beauty Salon</option>
-                    <option value="Massage Therapy">Massage Therapy</option>
-                    <option value="Skincare">Skincare</option>
+                    <option value="">انتخاب خدمات</option>
+                    <optgroup label="لاین ناخن">
+                        <option value="Nail - Manicure">مانیکور</option>
+                        <option value="Nail - Pedicure">پدیکور</option>
+                        <option value="Nail - Nail Extension">کاشت ناخن</option>
+                        <option value="Nail - Nail Repair">ترمیم ناخن</option>
+                    </optgroup>
+                    <optgroup label="لاین ماساژ">
+                        <option value="Massage - Relaxation">ماساژ آرامش‌بخش</option>
+                        <option value="Massage - Wellness">ماساژ ریلکسیشن</option>
+                    </optgroup>
+                    <optgroup label="لاین مو">
+                        <option value="Hair - Hair Color">رنگ مو</option>
+                        <option value="Hair - Haircut">کوتاهی مو</option>
+                        <option value="Hair - Bleaching">دکلره</option>
+                        <option value="Hair - Keratin">کراتین</option>
+                    </optgroup>
+                    <optgroup label="لاین پوست">
+                        <option value="Skin - Facial">فیشیال</option>
+                        <option value="Skin - Cleansing">پاک‌سازی پوست</option>
+                    </optgroup>
+                    <optgroup label="لاین میکاپ">
+                        <option value="Makeup - Makeup">میکاپ</option>
+                        <option value="Makeup - Occasion Makeup">میکاپ مناسبتی</option>
+                    </optgroup>
                 </select>
 
-                <label for="booking-date-display">Appointment Date (Persian Calendar)</label>
+                <label for="booking-date-display">تاریخ نوبت</label>
                 <input id="booking-date-display" type="text"
-                       placeholder="Select a Persian date"
-                       autocomplete="off" required readonly>
-
+                       placeholder="انتخاب تاریخ شمسی" autocomplete="off"
+                       required readonly>
                 <input id="booking-date" name="date" type="hidden">
 
-                <label for="booking-time">Appointment Time</label>
+                <label for="booking-time">ساعت انتخاب‌شده</label>
                 <select id="booking-time" name="time" required>
-                    <option value="">Choose a time</option>
-                    <option value="10:00">10:00 AM</option>
-                    <option value="12:00">12:00 PM</option>
-                    <option value="14:00">2:00 PM</option>
-                    <option value="16:00">4:00 PM</option>
-                    <option value="18:00">6:00 PM</option>
-                    <option value="20:00">8:00 PM</option>
-                    <option value="22:00">10:00 PM</option>
+                    <option value="">ابتدا از جدول هفتگی انتخاب کنید</option>
+                    <option value="10:00">۱۰:۰۰</option>
+                    <option value="12:00">۱۲:۰۰</option>
+                    <option value="14:00">۱۴:۰۰</option>
+                    <option value="16:00">۱۶:۰۰</option>
+                    <option value="18:00">۱۸:۰۰</option>
+                    <option value="20:00">۲۰:۰۰</option>
+                    <option value="22:00">۲۲:۰۰</option>
                 </select>
 
-                <button class="button submit-button" type="submit">
-                    Confirm Appointment
-                </button>
-
+                <button class="button submit-button" type="submit">ثبت درخواست نوبت</button>
                 <p id="booking-message" role="status" aria-live="polite"></p>
             </form>
         </section>
 
-        <!-- Daily appointment management -->
         <section id="appointments" class="section">
-            <h2>Daily Appointment Schedule</h2>
+            <h2>مدیریت نوبت‌ها</h2>
             <p class="section-description">
-                View appointments saved in this browser for the selected date.
+                این بخش مدیریتی است؛ اطلاعات مشتریان را در صفحه عمومی جدول هفتگی نمایش نمی‌دهد.
             </p>
 
             <div class="appointment-controls">
-                <label for="schedule-date">Select Appointment Date</label>
+                <label for="schedule-date">تاریخ موردنظر</label>
                 <input id="schedule-date" type="date">
                 <button id="show-all-appointments" class="button" type="button">
-                    Show All Saved Appointments
+                    نمایش همه نوبت‌های ذخیره‌شده
                 </button>
             </div>
 
             <div class="appointment-summary">
                 <div class="summary-card">
-                    <span>Total Appointments</span>
+                    <span>تعداد نوبت‌ها</span>
                     <strong id="appointment-count">0</strong>
                 </div>
                 <div class="summary-card">
-                    <span>Booked Time Slots</span>
+                    <span>ساعت‌های رزروشده</span>
                     <strong id="booked-slots-count">0</strong>
                 </div>
             </div>
@@ -136,31 +249,27 @@
                 <table class="appointments-table">
                     <thead>
                         <tr>
-                            <th>Time</th>
-                            <th>Customer Name</th>
-                            <th>Phone</th>
-                            <th>Service</th>
-                            <th>Date</th>
+                            <th>ساعت</th>
+                            <th>نام مشتری</th>
+                            <th>شماره تماس</th>
+                            <th>خدمات</th>
+                            <th>تاریخ</th>
                         </tr>
                     </thead>
                     <tbody id="appointments-table-body">
-                        <tr>
-                            <td colspan="5">No appointments to display.</td>
-                        </tr>
+                        <tr><td colspan="5">هنوز نوبتی برای نمایش وجود ندارد.</td></tr>
                     </tbody>
                 </table>
             </div>
-
             <p id="schedule-message" role="status" aria-live="polite"></p>
             <p class="section-description">
-                Note: This schedule is a local browser view, not a shared
-                multi-customer booking database.
+                توجه: تا زمانی که پایگاه داده مشترک متصل نشود، اطلاعات این نسخه فقط در مرورگر فعلی ذخیره می‌شود.
             </p>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 BeautyBooking. All rights reserved.</p>
+        <p>&copy; 2026 BeautyBooking. تمامی حقوق محفوظ است.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>

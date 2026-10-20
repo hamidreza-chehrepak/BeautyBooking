@@ -13,15 +13,21 @@ const EMAILJS_TEMPLATE_ID = "template_6u7m5t2";
 const OWNER_EMAIL = "hamidiumcharpak@gmail.com";
 const STORAGE_KEY = "beautybooking_appointments_v1";
 
+const DAYS = [
+    "شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه",
+    "چهارشنبه", "پنجشنبه", "جمعه"
+];
+const TIMES = ["10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"];
+
 let currentTheme = 0;
 let themeTimer;
+let selectedSlot = null;
 
 function applyTheme(index) {
     currentTheme = (index + themes.length) % themes.length;
     const theme = themes[currentTheme];
-    const root = document.documentElement;
 
-    const variables = {
+    Object.entries({
         "--accent": theme.accent,
         "--accent-2": theme.accent2,
         "--glow": theme.glow,
@@ -34,11 +40,9 @@ function applyTheme(index) {
         "--hero-b": theme.heroB,
         "--footer": theme.footer,
         "--shadow": theme.shadow
-    };
-
-    Object.entries(variables).forEach(([name, value]) => {
-        root.style.setProperty(name, value);
-    });
+    }).forEach(([name, value]) =>
+        document.documentElement.style.setProperty(name, value)
+    );
 
     const button = document.getElementById("theme-toggle");
     if (button) button.textContent = `🎨 ${theme.name} · Change`;
@@ -59,94 +63,183 @@ function getAppointments() {
     }
 }
 
-function saveAppointments(appointments) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(appointments));
+function saveAppointments(items) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 }
 
 function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, character => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[character]);
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;",
+        '"': "&quot;", "'": "&#39;"
+    })[char]);
+}
+
+function getLineForService(service) {
+    if (service.startsWith("Nail")) return "nail";
+    if (service.startsWith("Massage")) return "massage";
+    if (service.startsWith("Hair")) return "hair";
+    if (service.startsWith("Skin")) return "skin";
+    if (service.startsWith("Makeup")) return "makeup";
+    return "";
+}
+
+function getDayIndex(dateString) {
+    const date = new Date(`${dateString}T12:00:00`);
+    if (Number.isNaN(date.getTime())) return -1;
+
+    // JavaScript: Sunday=0. Persian week starts Saturday.
+    return (date.getDay() + 1) % 7;
+}
+
+function getWeekDates() {
+    const today = new Date();
+    today.setHours(12, 0, 0, 0);
+
+    // Find Saturday of the current week.
+    const offset = (today.getDay() + 1) % 7;
+    today.setDate(today.getDate() - offset);
+
+    return DAYS.map((_, index) => {
+        const day = new Date(today);
+        day.setDate(today.getDate() + index);
+        return [
+            day.getFullYear(),
+            String(day.getMonth() + 1).padStart(2, "0"),
+            String(day.getDate()).padStart(2, "0")
+        ].join("-");
+    });
+}
+
+function isSlotBooked(line, date, time) {
+    return getAppointments().some(item =>
+        item.line === line &&
+        item.date === date &&
+        item.time === time
+    );
+}
+
+function renderWeeklySchedules() {
+    const dates = getWeekDates();
+
+    document.querySelectorAll(".weekly-line").forEach(card => {
+        const line = card.dataset.line;
+        const tbody = card.querySelector(".weekly-table-body");
+        if (!tbody) return;
+
+        tbody.innerHTML = TIMES.map(time => {
+            const cells = dates.map((date, dayIndex) => {
+                const booked = isSlotBooked(line, date, time);
+                const selected = selectedSlot &&
+                    selectedSlot.line === line &&
+                    selectedSlot.date === date &&
+                    selectedSlot.time === time;
+
+                let className = booked ? "slot-booked" : "slot-available";
+                let label = booked ? "رزرو شده" : "آزاد";
+
+                if (selected) {
+                    className += " slot-selected";
+                    label = "انتخاب شما";
+                }
+
+                return `<td>
+                    <button
+                        type="button"
+                        class="weekly-slot ${className}"
+                        data-line="${line}"
+                        data-date="${date}"
+                        data-time="${time}"
+                        ${booked ? "disabled" : ""}
+                        aria-label="${DAYS[dayIndex]} ${date} ساعت ${time}: ${label}">
+                        ${label}
+                    </button>
+                </td>`;
+            }).join("");
+
+            return `<tr><th scope="row">${time}</th>${cells}</tr>`;
+        }).join("");
+    });
+}
+
+function selectSlot(line, date, time) {
+    if (isSlotBooked(line, date, time)) return;
+
+    selectedSlot = { line, date, time };
+
+    const dateInput = document.getElementById("booking-date");
+    const timeSelect = document.getElementById("booking-time");
+    const dateDisplay = document.getElementById("booking-date-display");
+    const serviceSelect = document.getElementById("service");
+
+    if (dateInput) dateInput.value = date;
+    if (timeSelect) timeSelect.value = time;
+
+    // Convert the selected Gregorian date to Persian for display.
+    if (dateDisplay && typeof persianDate !== "undefined") {
+        const parts = date.split("-").map(Number);
+        dateDisplay.value = new persianDate([
+            parts[0], parts[1] - 1, parts[2]
+        ]).format("YYYY/MM/DD");
+    }
+
+    if (serviceSelect) {
+        const matchingOption = Array.from(serviceSelect.options).find(option =>
+            option.value && getLineForService(option.value) === line
+        );
+        if (matchingOption) serviceSelect.value = matchingOption.value;
+    }
+
+    renderWeeklySchedules();
+
+    document.getElementById("booking")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
 }
 
 function renderAppointments(date = "", showAll = false) {
-    const tableBody = document.getElementById("appointments-table-body");
-    const countElement = document.getElementById("appointment-count");
-    const slotsElement = document.getElementById("booked-slots-count");
-    const scheduleMessage = document.getElementById("schedule-message");
+    const tbody = document.getElementById("appointments-table-body");
+    if (!tbody) return;
 
-    if (!tableBody) return;
+    const appointments = getAppointments()
+        .filter(item => showAll || item.date === date)
+        .sort((a, b) =>
+            a.date.localeCompare(b.date) || a.time.localeCompare(b.time)
+        );
 
-    const allAppointments = getAppointments();
-    const appointments = (showAll
-        ? allAppointments
-        : allAppointments.filter(item => item.date === date)
-    ).sort((a, b) =>
-        a.date.localeCompare(b.date) || a.time.localeCompare(b.time)
-    );
+    const count = document.getElementById("appointment-count");
+    const slots = document.getElementById("booked-slots-count");
+    const message = document.getElementById("schedule-message");
 
-    if (countElement) countElement.textContent = appointments.length;
-
-    if (slotsElement) {
-        slotsElement.textContent = new Set(
-            appointments.map(item => `${item.date}_${item.time}`)
+    if (count) count.textContent = appointments.length;
+    if (slots) {
+        slots.textContent = new Set(
+            appointments.map(item => `${item.line}_${item.date}_${item.time}`)
         ).size;
     }
 
-    if (appointments.length === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="5">No appointments found for this selection.</td>
-            </tr>`;
-    } else {
-        tableBody.innerHTML = appointments.map(item => `
-            <tr>
-                <td>${escapeHTML(item.time)}</td>
-                <td>${escapeHTML(item.name)}</td>
-                <td>${escapeHTML(item.phone)}</td>
-                <td>${escapeHTML(item.service)}</td>
-                <td>${escapeHTML(item.date)}</td>
-            </tr>`
-        ).join("");
-    }
+    tbody.innerHTML = appointments.length
+        ? appointments.map(item => `<tr>
+            <td>${escapeHTML(item.time)}</td>
+            <td>${escapeHTML(item.name)}</td>
+            <td>${escapeHTML(item.phone)}</td>
+            <td>${escapeHTML(item.service)}</td>
+            <td>${escapeHTML(item.date)}</td>
+        </tr>`).join("")
+        : `<tr><td colspan="5">نوبتی برای نمایش وجود ندارد.</td></tr>`;
 
-    if (scheduleMessage) {
-        scheduleMessage.textContent = showAll
-            ? `Showing all ${appointments.length} locally saved appointment(s).`
-            : `Showing ${appointments.length} appointment(s) for ${date || "the selected date"}.`;
+    if (message) {
+        message.textContent = showAll
+            ? `همه ${appointments.length} نوبت ذخیره‌شده نمایش داده شده‌اند.`
+            : `تعداد نوبت‌های این تاریخ: ${appointments.length}`;
     }
 }
 
-function updateBookedTimes(date) {
-    const timeSelect = document.getElementById("booking-time");
-    if (!timeSelect) return;
+function refreshSchedule() {
+    renderWeeklySchedules();
 
-    const selectedTime = timeSelect.value;
-    const bookedTimes = new Set(
-        getAppointments()
-            .filter(item => item.date === date)
-            .map(item => item.time)
-    );
-
-    Array.from(timeSelect.options).forEach(option => {
-        if (!option.value) return;
-
-        option.disabled = bookedTimes.has(option.value);
-        option.textContent = option.textContent
-            .replace(/ \(Booked\)$/, "");
-
-        if (option.disabled) {
-            option.textContent += " (Booked)";
-        }
-    });
-
-    if (selectedTime && bookedTimes.has(selectedTime)) {
-        timeSelect.value = "";
-    }
+    const date = document.getElementById("schedule-date")?.value || "";
+    renderAppointments(date);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -155,22 +248,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const header = document.querySelector("header");
-
     if (header && !document.getElementById("theme-toggle")) {
         const button = document.createElement("button");
         button.id = "theme-toggle";
         button.className = "theme-button";
         button.type = "button";
-        button.textContent = "🎨 Change Theme";
+        button.textContent = "🎨 تغییر رنگ";
 
         button.addEventListener("click", () => {
             applyTheme(currentTheme + 1);
             restartTimer();
         });
 
-        const nav = header.querySelector("nav");
-        if (nav) nav.appendChild(button);
-        else header.appendChild(button);
+        header.querySelector("nav")?.appendChild(button);
     }
 
     applyTheme(0);
@@ -178,161 +268,122 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.querySelectorAll(".choose-service").forEach(button => {
         button.addEventListener("click", () => {
-            const select = document.getElementById("service");
-
-            if (select) {
-                select.value = button.dataset.service || "";
-                document.getElementById("booking")
-                    ?.scrollIntoView({ behavior: "smooth" });
-            }
+            const service = document.getElementById("service");
+            if (service) service.value = button.dataset.service || "";
+            document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
         });
+    });
+
+    document.getElementById("weekly-schedules")?.addEventListener("click", event => {
+        const button = event.target.closest(".weekly-slot");
+        if (!button || button.disabled) return;
+
+        selectSlot(button.dataset.line, button.dataset.date, button.dataset.time);
     });
 
     const dateDisplay = document.getElementById("booking-date-display");
     const dateInput = document.getElementById("booking-date");
+
+    if (dateDisplay && dateInput &&
+        typeof jQuery !== "undefined" &&
+        typeof jQuery.fn.persianDatepicker === "function") {
+        jQuery(dateDisplay).persianDatepicker({
+            format: "YYYY/MM/DD",
+            autoClose: true,
+            initialValue: false,
+            calendar: {
+                persian: { locale: "en", leapYearMode: "astronomical" }
+            },
+            onSelect: function (unixDate) {
+                const date = new Date(unixDate);
+                dateInput.value = [
+                    date.getFullYear(),
+                    String(date.getMonth() + 1).padStart(2, "0"),
+                    String(date.getDate()).padStart(2, "0")
+                ].join("-");
+            }
+        });
+    }
+
     const scheduleDate = document.getElementById("schedule-date");
-    const showAllButton = document.getElementById("show-all-appointments");
+    scheduleDate?.addEventListener("change", () =>
+        renderAppointments(scheduleDate.value)
+    );
 
-    if (scheduleDate) {
-        scheduleDate.value = dateInput?.value || "";
-        scheduleDate.addEventListener("change", () => {
-            renderAppointments(scheduleDate.value);
-        });
-    }
+    document.getElementById("show-all-appointments")?.addEventListener("click", () =>
+        renderAppointments("", true)
+    );
 
-    if (showAllButton) {
-        showAllButton.addEventListener("click", () => {
-            renderAppointments("", true);
-        });
-    }
-
-    if (dateDisplay && dateInput) {
-        if (typeof jQuery !== "undefined" &&
-            typeof jQuery.fn.persianDatepicker === "function") {
-            jQuery(dateDisplay).persianDatepicker({
-                format: "YYYY/MM/DD",
-                autoClose: true,
-                initialValue: false,
-                calendar: {
-                    persian: {
-                        locale: "en",
-                        leapYearMode: "astronomical"
-                    }
-                },
-                onSelect: function (unixDate) {
-                    const selected = new Date(unixDate);
-                    const year = selected.getFullYear();
-                    const month = String(selected.getMonth() + 1).padStart(2, "0");
-                    const day = String(selected.getDate()).padStart(2, "0");
-
-                    dateInput.value = `${year}-${month}-${day}`;
-
-                    if (scheduleDate) {
-                        scheduleDate.value = dateInput.value;
-                    }
-
-                    updateBookedTimes(dateInput.value);
-                    renderAppointments(dateInput.value);
-                }
-            });
-        } else {
-            dateDisplay.placeholder =
-                "Calendar failed to load; refresh the page";
-        }
-    }
+    renderWeeklySchedules();
+    renderAppointments(scheduleDate?.value || "");
 
     const form = document.getElementById("booking-form");
     const message = document.getElementById("booking-message");
 
-    updateBookedTimes(dateInput?.value || "");
-    renderAppointments(scheduleDate?.value || "");
-
-    if (!form || !message) return;
-
-    form.addEventListener("submit", async event => {
+    form?.addEventListener("submit", async event => {
         event.preventDefault();
-
         if (!form.reportValidity()) return;
 
-        if (!dateInput?.value) {
-            message.textContent =
-                "Please select an appointment date from the Persian calendar.";
-            return;
-        }
-
-        if (typeof emailjs === "undefined") {
-            message.textContent =
-                "Email service failed to load. Check your internet connection.";
-            return;
-        }
-
         const formData = new FormData(form);
+        const service = String(formData.get("service") || "");
+        const line = getLineForService(service);
+        const date = dateInput?.value || "";
+        const time = String(formData.get("time") || "");
+
+        if (!line || !date || !time) {
+            message.textContent = "لطفاً خدمات، تاریخ و ساعت را انتخاب کنید.";
+            return;
+        }
+
+        if (isSlotBooked(line, date, time)) {
+            message.textContent = "این ساعت قبلاً در این مرورگر رزرو شده است. ساعت دیگری انتخاب کنید.";
+            refreshSchedule();
+            return;
+        }
 
         const appointment = {
             id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-            name: formData.get("name") || "",
-            phone: formData.get("phone") || "",
-            service: formData.get("service") || "",
-            date: dateInput.value,
-            time: formData.get("time") || ""
+            line,
+            name: String(formData.get("name") || ""),
+            phone: String(formData.get("phone") || ""),
+            service,
+            date,
+            time
         };
-
-        const appointments = getAppointments();
-
-        const duplicate = appointments.some(item =>
-            item.date === appointment.date &&
-            item.time === appointment.time
-        );
-
-        if (duplicate) {
-            message.textContent =
-                "This time is already booked in this browser. Please choose another time.";
-            updateBookedTimes(appointment.date);
-            return;
-        }
 
         const submitButton = form.querySelector('button[type="submit"]');
         if (submitButton) submitButton.disabled = true;
-
-        message.textContent = "Sending booking notification...";
-
-        const params = {
-            customer_name: appointment.name,
-            customer_email: "",
-            customer_phone: appointment.phone,
-            booking_date: appointment.date,
-            booking_time: appointment.time,
-            service_name: appointment.service,
-            email: OWNER_EMAIL
-        };
+        message.textContent = "در حال ارسال درخواست رزرو...";
 
         try {
-            await emailjs.send(
-                EMAILJS_SERVICE_ID,
-                EMAILJS_TEMPLATE_ID,
-                params
-            );
+            if (typeof emailjs === "undefined") {
+                throw new Error("EmailJS is not available.");
+            }
 
+            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                customer_name: appointment.name,
+                customer_email: "",
+                customer_phone: appointment.phone,
+                booking_date: appointment.date,
+                booking_time: appointment.time,
+                service_name: appointment.service,
+                email: OWNER_EMAIL
+            });
+
+            const appointments = getAppointments();
             appointments.push(appointment);
             saveAppointments(appointments);
 
-            message.textContent =
-                "Booking notification sent and appointment saved in this browser.";
-
+            message.textContent = "درخواست رزرو ارسال و در این مرورگر ذخیره شد.";
             form.reset();
-
+            dateInput.value = "";
             if (dateDisplay) dateDisplay.value = "";
+            selectedSlot = null;
 
-            if (dateInput) dateInput.value = "";
-
-            if (scheduleDate) scheduleDate.value = appointment.date;
-
-            updateBookedTimes("");
-            renderAppointments(appointment.date);
+            refreshSchedule();
         } catch (error) {
-            console.error("EmailJS error:", error);
-            message.textContent =
-                "Email could not be sent. The appointment was not saved.";
+            console.error("Booking error:", error);
+            message.textContent = "ارسال ایمیل ناموفق بود؛ نوبت در این نسخه ذخیره نشد.";
         } finally {
             if (submitButton) submitButton.disabled = false;
         }
